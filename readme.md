@@ -17,6 +17,7 @@ Vite ==> build system
 ReactjS 19 features
 Firebase ==> database
 Redux toolkit ==> state management
+Formik ==> Form integration
 
 
 Typescript 
