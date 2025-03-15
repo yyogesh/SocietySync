@@ -11,6 +11,8 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   containerClassName?: string
 }
 
+// <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike">
+
 const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
@@ -34,10 +36,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       setShowPassword(!showPassword)
     }
 
+    // `$ adsfasf ${fullWidth} asfasfasf`
     return (
       <div className={`${fullWidth ? "w-full" : ""} ${containerClassName}`}>
         {label && (
-          <label htmlFor={props.id} className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor={props.id} className="block text-sm font-medium text-white mb-1">
             {label}
           </label>
         )}
@@ -74,7 +77,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {(helperText || error) && (
-          <p className={`mt-1 text-sm ${error ? "text-red-600" : "text-gray-500"}`}>{error || helperText}</p>
+          <p className={`mt-1 text-sm ${error ? "text-red-600" : "text-gray-400"}`}>{error || helperText}</p>
         )}
       </div>
     )
