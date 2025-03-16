@@ -1,18 +1,27 @@
-import { useState } from "react"
 import Button from "../../components/common/Button"
 import Input from "../../components/common/Input"
 import { motion } from 'framer-motion'
 import { Building } from "lucide-react"
+import { z } from "zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address").min(1, 'Email is required'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFormData>({resolver: zodResolver(loginSchema)})
+  // console.log(register('email'), errors, isSubmitting)
 
   const error = false;
   const loading = false;
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+  const onSubmit = (data: LoginFormData) => {
+    console.log('data', data)
   }
 
   return (
@@ -33,18 +42,18 @@ const LoginPage = () => {
 
         {error && <div className="bg-red-500 text-white p-3 rounded-lg mb-4 text-sm">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="mb-4">
             <Input label={"Email Address"}
               id="email"
               type="email"
               placeholder="Enter your email"
-              value={email}
               fullWidth
               required
+              {...register('email')}
               containerClassName="mb-0"
-              onChange={(e) => setEmail(e.target.value)}
               helperText={"Enter your email"}
+              error={errors.email?.message}
               className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
             />
           </div>
@@ -63,16 +72,16 @@ const LoginPage = () => {
               fullWidth
               required
               className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register('password')}
+              error={errors.password?.message}
               type="password"
               helperText={"Enter your password"} />
           </div>
           <div className="mb-6 text-center">
-            <Button type="submit" fullWidth disabled={loading} isLoading={loading}
+            <Button type="submit" fullWidth disabled={isSubmitting} isLoading={isSubmitting}
               className="bg-white text-gray-900 hover:bg-gray-200 focus:ring-white"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {isSubmitting ? "Signing in..." : "Sign In"}
             </Button>
           </div>
         </form>
@@ -90,10 +99,3 @@ const LoginPage = () => {
 }
 
 export default LoginPage
-
-// class Login {
-//   constructor() {
-//     this.username = ""
-//     this.password = ""
-//   }
-// }
