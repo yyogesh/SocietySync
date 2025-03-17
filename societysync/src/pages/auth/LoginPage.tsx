@@ -25,12 +25,12 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#64748B] p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#64748B] p-0 md:p-4 relative overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative bg-white/10 backdrop-blur-lg shadow-2xl border border-white/20 rounded-2xl w-full max-w-md p-8"
+        className="min-h-screen md:min-h-full relative bg-white/10 backdrop-blur-lg shadow-2xl border border-white/20 md:rounded-2xl w-full max-w-md p-8"
       >
         <div className="flex justify-center mb-6">
           <div className="bg-white/20 p-3 rounded-full shadow-md">

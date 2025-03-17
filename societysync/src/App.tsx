@@ -4,7 +4,7 @@ import SignupPage from "./pages/auth/SignupPage"
 function App() {
   return (
     <>
-      <LoginPage />
+      <SignupPage />
     </>
   )
 }
