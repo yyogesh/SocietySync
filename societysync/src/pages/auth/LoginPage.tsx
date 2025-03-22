@@ -5,6 +5,7 @@ import { Building } from "lucide-react"
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Link, useNavigate } from "react-router-dom"
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").min(1, 'Email is required'),
@@ -16,12 +17,14 @@ type LoginFormData = z.infer<typeof loginSchema>;
 const LoginPage = () => {
   const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFormData>({resolver: zodResolver(loginSchema)})
   // console.log(register('email'), errors, isSubmitting)
+  const navigate = useNavigate();
 
   const error = false;
   const loading = false;
 
   const onSubmit = (data: LoginFormData) => {
     console.log('data', data)
+    navigate('/dashboard')
   }
 
   return (
@@ -88,9 +91,9 @@ const LoginPage = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-300">
             Don't have an account?
-            <a href="/signup" className="text-white font-semibold hover:underline ml-1">
+            <Link to="/signup" className="text-white font-semibold hover:underline ml-1">
               Sign up
-            </a>
+            </Link>
           </p>
         </div>
       </motion.div>

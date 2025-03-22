@@ -1,10 +1,12 @@
-import LoginPage from "./pages/auth/LoginPage"
-import SignupPage from "./pages/auth/SignupPage"
+import { BrowserRouter } from "react-router-dom"
+import { AppRoutes } from "./routes"
 
 function App() {
   return (
     <>
-      <SignupPage />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
     </>
   )
 }

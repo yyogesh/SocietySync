@@ -10,6 +10,7 @@ import { Building } from "lucide-react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "react-router-dom";
 
 // Signup Schema Validation
 const signupSchema = z.object({
@@ -341,9 +342,9 @@ const SignupPage = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-300">
             Already have an account?
-            <a href="/login" className="text-white font-semibold hover:underline ml-1">
+            <Link to="/login" className="text-white font-semibold hover:underline ml-1">
               Sign in
-            </a>
+            </Link>
           </p>
         </div>
       </motion.div>
