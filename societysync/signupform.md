@@ -14,6 +14,7 @@ Floor Number - input required
 House Number - input required 
 AadharCard - input required 10 digit number only
 
+Extra field for database purpose only
 isAdmin
 createdDate
 approvedBy
