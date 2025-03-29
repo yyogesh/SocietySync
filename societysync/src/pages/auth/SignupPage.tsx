@@ -7,35 +7,11 @@ import Textarea from "../../components/common/Textarea";
 import Checkbox from "../../components/common/Checkbox";
 import { motion } from "framer-motion";
 import { Building } from "lucide-react";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/firebase";
-import { userRegister } from "../../services/authService";
+import { SignupFormData, signupSchema } from "../../utils/schemas";
 
-// Signup Schema Validation
-const signupSchema = z.object({
-  firstName: z.string().min(1, "First Name is required").max(50, "First Name is too long"),
-  lastName: z.string().min(1, "Last Name is required").max(50, "Last Name is too long"),
-  gender: z.enum(["male", "female", "other"], { required_error: "Gender is required" }),
-  emailAddress: z.string().email("Invalid email address").min(1, "Email is required"),
-  profilePicture: z.instanceof(File, { message: "Profile picture is required" }),
-  phoneNumber: z.string().min(10, "Phone number must be 10 digits").max(10, "Phone number must be 10 digits"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  state: z.string().min(1, "State is required"),
-  city: z.string().min(1, "City is required"),
-  pinNumber: z.string().min(6, "Pin number must be 6 digits").max(6, "Pin number must be 6 digits"),
-  address: z.string().min(1, "Address is required"),
-  streetTower: z.string().min(1, "Street/Tower is required"),
-  floorNumber: z.string().min(1, "Floor Number is required"),
-  houseNumber: z.string().min(1, "House Number is required"),
-  aadharCard: z.string().min(10, "Aadhar Card must be 10 digits").max(10, "Aadhar Card must be 10 digits"),
-  agreeToTerms: z.boolean().refine((val) => val === true, { message: "You must agree to the terms" }),
-});
-
-type SignupFormData = z.infer<typeof signupSchema>;
 
 // Placeholder Constants
 const PLACEHOLDERS = {
@@ -76,8 +52,6 @@ const SignupPage = () => {
 
   const onSubmit = async(data: SignupFormData) => {
     console.log("Signup Data:", data);
-    userRegister(data);
-   // await createUserWithEmailAndPassword(auth, data.emailAddress, data.password);
   };
 
   return (
@@ -166,7 +140,7 @@ const SignupPage = () => {
               id="profilePicture"
               required
               {...register("profilePicture")}
-              error={errors.profilePicture?.message}
+              error={errors.profilePicture?.message?.toString()}
               className="bg-white/20 border-white/30 px-4 py-2 text-white placeholder-gray-300 focus:ring-white"
             />
           </div>
@@ -197,6 +171,21 @@ const SignupPage = () => {
               required
               {...register("password")}
               error={errors.password?.message}
+              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div className="mb-4">
+            <Input
+              label={"Confirm Password"}
+              id="confirmPassword"
+              type="password"
+              placeholder={PLACEHOLDERS.password}
+              fullWidth
+              required
+              {...register("confirmPassword")}
+              error={errors.confirmPassword?.message}
               className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
             />
           </div>

@@ -69,9 +69,9 @@ const LoginPage = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-200">
                 Password
               </label>
-              <a href="/forgot-password" className="text-sm text-white hover:text-gray-300">
+              <Link to="/forgot-password" className="text-sm text-white hover:text-gray-300">
                 Forgot password?
-              </a>
+              </Link>
             </div>
             <Input
               id="password"
