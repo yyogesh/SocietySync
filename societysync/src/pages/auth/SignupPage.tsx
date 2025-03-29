@@ -11,6 +11,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../config/firebase";
+import { userRegister } from "../../services/authService";
 
 // Signup Schema Validation
 const signupSchema = z.object({
@@ -71,8 +74,10 @@ const SignupPage = () => {
   const error = false;
   const loading = false;
 
-  const onSubmit = (data: SignupFormData) => {
+  const onSubmit = async(data: SignupFormData) => {
     console.log("Signup Data:", data);
+    userRegister(data);
+   // await createUserWithEmailAndPassword(auth, data.emailAddress, data.password);
   };
 
   return (
