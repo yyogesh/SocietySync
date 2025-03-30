@@ -8,6 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate } from "react-router-dom"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../../config/firebase"
+import { useAppDispatch } from "../../hooks/hooks"
+import { setUser } from "../../slices/authSlice"
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").min(1, 'Email is required'),
@@ -20,14 +22,16 @@ const LoginPage = () => {
   const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFormData>({resolver: zodResolver(loginSchema)})
   // console.log(register('email'), errors, isSubmitting)
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const error = false;
   const loading = false;
 
   const onSubmit = async (data: LoginFormData) => {
     console.log('data', data)
-   const res = await signInWithEmailAndPassword(auth, data.email, data.password);
-   console.log(res)
+    dispatch(setUser({emailAddress: data.email, password: data.password} as any))
+   // const res = await signInWithEmailAndPassword(auth, data.email, data.password);
+   // console.log(res)
    // navigate('/dashboard')
   }
 

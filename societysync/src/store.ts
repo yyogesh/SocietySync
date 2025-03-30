@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice"; 
+import { loggerMiddleware } from "./middleware/logger";
 
-export const store = configureStore({
+export const store: any = configureStore({
     reducer: {
         // Add your reducers here
          auth: authReducer,
     },
     devTools: process.env.NODE_ENV !== "production",
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(loggerMiddleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>; // Inferred type: { posts: PostsState, comments: CommentsState, users: UsersState, ... }

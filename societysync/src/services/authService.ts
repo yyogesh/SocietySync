@@ -1,22 +1,29 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../config/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { SignupFormData } from "../utils/schemas";
+import { fileToBase64 } from "../utils/file";
 
-export const userRegister = async (userData: any) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, userData.emailAddress, userData.password);
-    const user = userCredential.user;
+export const userRegister = async (user: SignupFormData) => {
+    try {
+         // Create user in Firebase Auth
+        const userCredintials = await createUserWithEmailAndPassword(auth, user.emailAddress, user.password);
+        const authUser = userCredintials.user;
 
-    const userDocRef = doc(db, 'users', user.uid)
+        const profilePicture = 'test';//await fileToBase64(user.profilePicture);
+        const userDocRef = doc(db, "users", authUser.uid);
+        const userData = {
+            ...user,
+            profilePicture,
+            uid: authUser.uid,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }
+        await setDoc(userDocRef, userData);
 
-    const userDocData = {
-        uid: user.uid,
-        email: user.email,
-        displayName: userData.displayName,
-        photoURL: userData.photoURL,
-        role: userData.role,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        return userData;
+
+    } catch (error: any) {
+        throw new Error(error.message || "Failed to register")
     }
-
-    await setDoc(userDocRef, userDocData)
 }

@@ -9,8 +9,10 @@ import { motion } from "framer-motion";
 import { Building } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SignupFormData, signupSchema } from "../../utils/schemas";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { registerUser } from "../../slices/authSlice";
 
 
 // Placeholder Constants
@@ -46,12 +48,19 @@ const SignupPage = () => {
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const error = false;
-  const loading = false;
+  const {loading, error} = useAppSelector((state) => state.auth);
 
   const onSubmit = async(data: SignupFormData) => {
     console.log("Signup Data:", data);
+    const resultAction = await dispatch(registerUser(data));
+
+    if (registerUser.fulfilled.match(resultAction)) {
+      console.log("Registration successful:", resultAction.payload);
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -323,11 +332,11 @@ const SignupPage = () => {
             <Button
               type="submit"
               fullWidth
-              disabled={isSubmitting}
-              isLoading={isSubmitting}
+              disabled={loading}
+              isLoading={loading}
               className="bg-white text-gray-900 hover:bg-gray-200 focus:ring-white"
             >
-              {isSubmitting ? "Signing up..." : "Sign Up"}
+              {loading ? "Signing up..." : "Sign Up"}
             </Button>
           </div>
         </form>
