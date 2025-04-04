@@ -17,7 +17,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className={`${fullWidth ? "w-full" : ""} ${containerClassName}`}>
         {label && (
-          <label htmlFor={props.id} className="block text-sm font-medium text-white mb-1">
+          <label htmlFor={props.id} className="block text-sm font-medium text-gray-700 mb-1">
             {label}
           </label>
         )}

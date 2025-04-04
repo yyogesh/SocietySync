@@ -7,7 +7,7 @@ export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElemen
   fullWidth?: boolean
   containerClassName?: string
 }
-
+// block text-sm font-medium text-gray-700
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ label, helperText, error, fullWidth = false, containerClassName = "", className = "", ...props }, ref) => {
     return (
@@ -24,7 +24,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             {...props}
           />
           {label && (
-            <label htmlFor={props.id} className="ml-2 text-sm text-white">
+            <label htmlFor={props.id} className="ml-2 text-sm font-medium text-gray-700">
               {label}
             </label>
           )}

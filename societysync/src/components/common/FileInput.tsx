@@ -13,7 +13,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     return (
       <div className={`${fullWidth ? "w-full" : ""} ${containerClassName}`}>
         {label && (
-          <label htmlFor={props.id} className="block text-sm font-medium text-white mb-1">
+          <label htmlFor={props.id} className="block text-sm font-medium text-gray-700 mb-1">
             {label}
           </label>
         )}
@@ -22,7 +22,7 @@ const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
           type="file"
           className={`
             block w-full text-sm text-gray-900 
-            border ${error ? "border-red-500" : "border-gray-300"} 
+            border ${error ? "border-red-500" : "border-gray-700"} 
             rounded-lg cursor-pointer 
             focus:outline-none ${error ? "focus:ring-red-500" : "focus:ring-primary"} 
             ${className}
