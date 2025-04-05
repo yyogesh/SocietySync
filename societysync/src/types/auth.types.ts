@@ -14,3 +14,18 @@ export interface AuthState {
     loading: boolean
     error: string | null
 }
+
+export interface PasswordResetData {
+    email: string
+  }
+  
+  export interface PasswordChangeData {
+    currentPassword: string
+    newPassword: string
+  }
+
+  export interface LoginCredentials {
+    email: string
+    password: string
+  }
+  

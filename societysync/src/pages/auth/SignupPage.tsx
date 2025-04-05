@@ -59,7 +59,7 @@ const SignupPage = () => {
 
     if (registerUser.fulfilled.match(resultAction)) {
       console.log("Registration successful:", resultAction.payload);
-      navigate("/dashboard");
+      navigate("/dashboard")
     }
   };
 

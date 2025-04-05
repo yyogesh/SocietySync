@@ -6,8 +6,8 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link, useNavigate } from "react-router-dom"
-import { useAppDispatch } from "../../hooks/hooks"
-import { setUser } from "../../slices/authSlice"
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks"
+import { loginUser, setUser } from "../../slices/authSlice"
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").min(1, 'Email is required'),
@@ -21,14 +21,15 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const error = false;
-  const loading = false;
+  const {error, loading} = useAppSelector((state) => state.auth)
 
   const onSubmit = async (data: LoginFormData) => {
     console.log('data', data)
-    dispatch(setUser({emailAddress: data.email, password: data.password} as any))
-   // console.log(res)
-    navigate('/dashboard')
+   const resultAction =  await dispatch(loginUser(data))
+    console.log('resultAction', resultAction)
+    if(loginUser.fulfilled.match(resultAction)) {
+      navigate("/dashboard")
+    }
   }
 
   return (
@@ -85,10 +86,10 @@ const LoginPage = () => {
               helperText={"Enter your password"} />
           </div>
           <div className="mb-6 text-center">
-            <Button type="submit" fullWidth disabled={isSubmitting} isLoading={isSubmitting}
+            <Button type="submit" fullWidth disabled={loading} isLoading={loading}
               className="bg-[#003366] text-white hover:bg-[#00274F] focus:ring-[#FF9800]"
             >
-              {isSubmitting ? "Signing in..." : "Sign In"}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
           </div>
         </form>
