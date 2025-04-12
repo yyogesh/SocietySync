@@ -1,8 +1,8 @@
 3 Project 
 
 1 ReactjS ==> SocietySync 
-2 NextJS ==> full stack ==> CMS 
-3 Micro-frontend
+2 NextJS ==> full stack ==> CMS sting multilanguage, image change 
+3 Micro-frontend ==> 
 
 desinging ==> Tailwind (style)
 Typescript ==> Strongly type javscript

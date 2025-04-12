@@ -1,39 +1,50 @@
+import { Link, useNavigate } from "react-router-dom"
+import { Building } from "lucide-react"
 import Button from "../../components/common/Button"
 import Input from "../../components/common/Input"
-import { motion } from 'framer-motion'
-import { Building } from "lucide-react"
-import { z } from "zod"
+import { motion } from "framer-motion"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link, useNavigate } from "react-router-dom"
+import { useTheme } from "../../context/ThemeContext"
+import { getThemeColors } from "../../utils/theme"
+import { loginUser } from "../../slices/authSlice"
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks"
-import { loginUser, setUser } from "../../slices/authSlice"
+import { LoginFormData, loginSchema } from "../../utils/schemas"
 
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address").min(1, 'Email is required'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
 
 const LoginPage = () => {
-  const {register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFormData>({resolver: zodResolver(loginSchema)})
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { theme } = useTheme()
+  const themeColors = getThemeColors(theme)
 
-  const {error, loading} = useAppSelector((state) => state.auth)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
+
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const { error, loading } = useAppSelector((state) => state.auth)
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log('data', data)
-   const resultAction =  await dispatch(loginUser(data))
-    console.log('resultAction', resultAction)
-    if(loginUser.fulfilled.match(resultAction)) {
+    const resultAction = await dispatch(
+      loginUser({
+        email: data.email,
+        password: data.password,
+      }),
+    )
+
+    if (loginUser.fulfilled.match(resultAction)) {
       navigate("/dashboard")
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFEF80] via-[#FFCB45] to-[#FFA726] p-0 md:p-4 relative overflow-hidden">
+    <div
+      className={`min-h-screen flex items-center justify-center bg-gradient-to-br ${theme.colors.backgroundGradient} p-0 md:p-4 relative overflow-hidden`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -41,28 +52,27 @@ const LoginPage = () => {
         className="min-h-screen md:min-h-full relative bg-white backdrop-blur-lg shadow-xl border border-white/20 md:rounded-2xl w-full max-w-md p-8"
       >
         <div className="flex justify-center mb-6">
-          <div className="bg-[#FF9800]/20 p-3 rounded-full shadow-md">
-            <Building className="h-10 w-10 text-[#FF6F00]" />
+          <div className={`bg-[${themeColors.primary}]/20 p-3 rounded-full shadow-md`}>
+            <Building className={`h-10 w-10 text-[${themeColors.primaryDark}]`} />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Welcome to SocietySync</h2>
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Welcome to {theme.name}</h2>
         <p className="text-center text-gray-600 mb-6">Sign in to your account to continue</p>
 
         {error && <div className="bg-red-500 text-white p-3 rounded-lg mb-4 text-sm">{error}</div>}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="mb-4">
-            <Input label={"Email Address"}
+            <Input
+              label="Email Address"
               id="email"
               type="email"
               placeholder="Enter your email"
               fullWidth
               required
-              {...register('email')}
-              containerClassName="mb-0"
-              helperText={"Enter your email"}
+              {...register("email")}
               error={errors.email?.message}
-              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
+              className={`bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[${themeColors.primary}]`}
             />
           </div>
           <div className="mb-6">
@@ -70,24 +80,31 @@ const LoginPage = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <Link to="/forgot-password" className="text-sm text-[#FF9800] hover:text-[#FF6F00]">
+              <Link
+                to="/forgot-password"
+                className={`text-sm text-[${themeColors.primary}] hover:text-[${themeColors.primaryDark}]`}
+              >
                 Forgot password?
               </Link>
             </div>
             <Input
               id="password"
+              type="password"
               placeholder="Enter your password"
               fullWidth
               required
-              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
-              {...register('password')}
+              className={`bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[${themeColors.primary}]`}
+              {...register("password")}
               error={errors.password?.message}
-              type="password"
-              helperText={"Enter your password"} />
+            />
           </div>
           <div className="mb-6 text-center">
-            <Button type="submit" fullWidth disabled={loading} isLoading={loading}
-              className="bg-[#003366] text-white hover:bg-[#00274F] focus:ring-[#FF9800]"
+            <Button
+              type="submit"
+              fullWidth
+              disabled={loading}
+              isLoading={loading}
+              className={`bg-[${themeColors.secondary}] text-white hover:bg-[${themeColors.secondaryDark}] focus:ring-[${themeColors.primary}]`}
             >
               {loading ? "Signing in..." : "Sign In"}
             </Button>
@@ -95,8 +112,8 @@ const LoginPage = () => {
         </form>
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Don't have an account?
-            <Link to="/signup" className="text-[#FF9800] font-semibold hover:underline ml-1">
+            Don't have an account?{" "}
+            <Link to="/signup" className={`text-[${themeColors.primary}] hover:text-[${themeColors.primaryDark}]`}>
               Sign up
             </Link>
           </p>

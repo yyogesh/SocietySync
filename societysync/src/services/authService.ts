@@ -9,15 +9,15 @@ import {
   type User as FirebaseUser,
 } from "firebase/auth";
 import { auth, db } from "../config/firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { SignupFormData } from "../utils/schemas";
 import { fileToBase64 } from "../utils/file";
 import { LoginCredentials, PasswordChangeData, PasswordResetData, User } from "../types/auth.types";
 
-export const userRegister = async (user: SignupFormData) => {
+export const userRegister = async (user: Partial<SignupFormData>) => {
   try {
     // Create user in Firebase Auth
-    const userCredintials = await createUserWithEmailAndPassword(auth, user.emailAddress, user.password);
+    const userCredintials = await createUserWithEmailAndPassword(auth, user.email || '', user.password || '');
     const authUser = userCredintials.user;
 
     const profilePicture = 'test';//await fileToBase64(user.profilePicture);
@@ -49,7 +49,7 @@ export const login = async ({ email, password }: LoginCredentials): Promise<User
     if (userDoc.exists()) {
       return {
         uid: userCredential.user.uid,
-        emailAddress: userCredential.user.email,
+        email: userCredential.user.email,
         ...userDoc.data(),
       } as User
     } else {
@@ -117,7 +117,7 @@ export const getCurrentUser = async (firebaseUser: FirebaseUser): Promise<User |
       const userData = userDoc.data()
       return {
         uid: firebaseUser.uid,
-        emailAddress: firebaseUser.email,
+        email: firebaseUser.email,
         ...userData,
         createdAt: userData.createdAt?.toDate() || new Date(),
         updatedAt: userData.updatedAt?.toDate() || new Date(),
@@ -127,5 +127,54 @@ export const getCurrentUser = async (firebaseUser: FirebaseUser): Promise<User |
     return null
   } catch (error: any) {
     throw new Error(error.message || "Failed to get current user")
+  }
+}
+
+
+
+/**
+ * Update current user's profile
+ */
+export const updateUserProfile = async (userData: SignupFormData): Promise<User> => {
+  try {
+    const currentUser = auth.currentUser
+
+    if (!currentUser) {
+      throw new Error("No authenticated user")
+    }
+
+    // Update in Firebase Auth if displayName is provided
+    // if (userData.displayName || userData.photoURL) {
+    //   await updateProfile(currentUser, {
+    //     displayName: userData.displayName || currentUser.displayName,
+    //     photoURL: userData.photoURL || currentUser.photoURL,
+    //   })
+    // }
+
+    // Update in Firestore
+    const userRef = doc(db, "users", currentUser.uid)
+    await updateDoc(userRef, {
+      ...userData,
+      updatedAt: serverTimestamp(),
+    })
+
+    // Get the updated user data
+    const updatedUserDoc = await getDoc(userRef)
+
+    if (!updatedUserDoc.exists()) {
+      throw new Error("User not found")
+    }
+
+    const updatedUserData = updatedUserDoc.data()
+
+    return {
+      uid: currentUser.uid,
+      email: currentUser.email,
+      ...updatedUserData,
+      createdAt: updatedUserData.createdAt?.toDate() || new Date(),
+      updatedAt: updatedUserData.updatedAt?.toDate() || new Date(),
+    } as User
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to update profile")
   }
 }

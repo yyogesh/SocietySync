@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { UserCheck, Clock, Search, Filter, ChevronRight, Shield, AlertTriangle, UserCircle } from "lucide-react"
 import Card from "../../components/common/Card"
