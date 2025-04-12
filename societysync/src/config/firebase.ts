@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import config from '../utils/config';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore/lite';
+import { getFirestore } from 'firebase/firestore';
 
 if (config.isDevelopment) {
 }

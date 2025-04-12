@@ -2,37 +2,131 @@ import { Routes, Route, Outlet, Navigate } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
-import { Dashboard } from "./pages";
+import { useAppSelector } from "./hooks/hooks";
+import { lazy, Suspense } from "react";
+import Layout from "./components/common/layout/Layout";
+
+// Lazy-loaded pages for better performance
+const ResidentDashboard = lazy(
+  () => import("./pages/dashboard/ResidentDashboard")
+);
+const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
+const SecurityDashboard = lazy(
+  () => import("./pages/dashboard/SecurityDashboard")
+);
 
 const PublicRoute = () => {
   return <Outlet />;
 };
 
-const PrivateRoute = () => {};
+// Loading component for suspense fallback
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
 
+// Protected route wrapper for authenticated users
+const ProtectedRoute = () => {
+  const { isAuthenticated, loading } = useAppSelector((state) => state.auth);
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+};
+
+// Admin route wrapper
 const AdminRoute = () => {
+  const { isAuthenticated, user, loading } = useAppSelector(
+    (state) => state.auth
+  );
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated || user?.role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Outlet />;
+};
+
+// Resident route wrapper
+const ResidentRoute = () => {
+  const { isAuthenticated, user, loading } = useAppSelector(
+    (state) => state.auth
+  );
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated || user?.role !== "resident") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <Outlet />;
+};
+
+// Security route wrapper
+const SecurityRoute = () => {
+  const { isAuthenticated, user, loading } = useAppSelector(
+    (state) => state.auth
+  );
+
+  if (loading) {
+    return <LoadingFallback />;
+  }
+
+  if (!isAuthenticated || user?.role !== "security") {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   return <Outlet />;
 };
 
 export const AppRoutes = () => {
   return (
-    <Routes>
-      <Route element={<PublicRoute />}>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+    <Suspense fallback={<LoadingFallback />}>
+      <Routes>
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<div>404 Not found</div>} />
-        {/* <Route index element={<LoginPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
-                <Route path="*" element={<div>404 Not found</div>} /> */}
-      </Route>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<div>404 Not found</div>} />
+        </Route>
 
-      <Route element={<AdminRoute />}>
-        <Route path="/admin/dashboard" element={<Dashboard />} />
-      </Route>
-    </Routes>
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<Layout />}>
+            {/* Admin Routes */}
+            <Route element={<AdminRoute />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+            {/* Resident Routes */}
+            <Route element={<ResidentRoute />}>
+              <Route path="/dashboard" element={<ResidentDashboard />} />
+            </Route>
+
+            {/* Security Routes */}
+            <Route element={<SecurityRoute />}>
+              <Route
+                path="/security-dashboard"
+                element={<SecurityDashboard />}
+              />
+            </Route>
+          </Route>
+        </Route>
+      </Routes>
+    </Suspense>
   );
 };

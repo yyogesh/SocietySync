@@ -17,7 +17,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
     return (
       <div className={`${fullWidth ? "w-full" : ""} ${containerClassName}`}>
         {label && (
-          <label className="block text-sm font-medium text-white mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             {label}
           </label>
         )}
@@ -35,7 +35,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
                 `}
                 {...props}
               />
-              <label htmlFor={props.id} className="ml-2 text-sm text-white">
+              <label htmlFor={props.id} className="ml-2 text-sm font-medium text-gray-700">
                 {option.label}
               </label>
             </div>

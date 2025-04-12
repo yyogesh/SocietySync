@@ -9,8 +9,10 @@ import { motion } from "framer-motion";
 import { Building } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SignupFormData, signupSchema } from "../../utils/schemas";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { registerUser } from "../../slices/authSlice";
 
 
 // Placeholder Constants
@@ -46,29 +48,36 @@ const SignupPage = () => {
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const error = false;
-  const loading = false;
+  const {loading, error} = useAppSelector((state) => state.auth);
 
   const onSubmit = async(data: SignupFormData) => {
     console.log("Signup Data:", data);
+    const resultAction = await dispatch(registerUser(data));
+
+    if (registerUser.fulfilled.match(resultAction)) {
+      console.log("Registration successful:", resultAction.payload);
+      navigate("/dashboard")
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#64748B] p-0 md:p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFEF80] via-[#FFCB45] to-[#FFA726] p-0 md:p-4 relative overflow-hidden">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="min-h-screen md:min-h-full relative bg-white/10 backdrop-blur-lg shadow-2xl border border-white/20 md:rounded-2xl w-full max-w-md p-8"
+        className="min-h-screen md:min-h-full relative bg-white backdrop-blur-lg shadow-xl border border-white/20 md:rounded-2xl w-full max-w-md p-8"
       >
         <div className="flex justify-center mb-6">
           <div className="bg-white/20 p-3 rounded-full shadow-md">
-            <Building className="h-10 w-10 text-white" />
+          <Building className="h-10 w-10 text-[#FF6F00]" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-center text-white mb-2">Welcome to SocietySync</h2>
-        <p className="text-center text-gray-300 mb-6">Create an account to get started</p>
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Welcome to SocietySync</h2>
+        <p className="text-center text-gray-600 mb-6">Create an account to get started</p>
 
         {error && <div className="bg-red-500 text-white p-3 rounded-lg mb-4 text-sm">{error}</div>}
 
@@ -84,7 +93,7 @@ const SignupPage = () => {
               required
               {...register("firstName")}
               error={errors.firstName?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -99,7 +108,7 @@ const SignupPage = () => {
               required
               {...register("lastName")}
               error={errors.lastName?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -129,7 +138,7 @@ const SignupPage = () => {
               required
               {...register("emailAddress")}
               error={errors.emailAddress?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -141,7 +150,7 @@ const SignupPage = () => {
               required
               {...register("profilePicture")}
               error={errors.profilePicture?.message?.toString()}
-              className="bg-white/20 border-white/30 px-4 py-2 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white/20 border-white/30 px-4 py-2 text-gray-800 placeholder-gray-700 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -156,7 +165,7 @@ const SignupPage = () => {
               required
               {...register("phoneNumber")}
               error={errors.phoneNumber?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -171,7 +180,7 @@ const SignupPage = () => {
               required
               {...register("password")}
               error={errors.password?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -186,7 +195,7 @@ const SignupPage = () => {
               required
               {...register("confirmPassword")}
               error={errors.confirmPassword?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -200,7 +209,7 @@ const SignupPage = () => {
               required
               {...register("state")}
               error={errors.state?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -214,7 +223,7 @@ const SignupPage = () => {
               required
               {...register("city")}
               error={errors.city?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -229,7 +238,7 @@ const SignupPage = () => {
               required
               {...register("pinNumber")}
               error={errors.pinNumber?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -243,7 +252,7 @@ const SignupPage = () => {
               required
               {...register("address")}
               error={errors.address?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -258,7 +267,7 @@ const SignupPage = () => {
               required
               {...register("streetTower")}
               error={errors.streetTower?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -273,7 +282,7 @@ const SignupPage = () => {
               required
               {...register("floorNumber")}
               error={errors.floorNumber?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -288,7 +297,7 @@ const SignupPage = () => {
               required
               {...register("houseNumber")}
               error={errors.houseNumber?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -303,7 +312,7 @@ const SignupPage = () => {
               required
               {...register("aadharCard")}
               error={errors.aadharCard?.message}
-              className="bg-white/20 border-white/30 text-white placeholder-gray-300 focus:ring-white"
+              className="bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:ring-[#FF9800]"
             />
           </div>
 
@@ -323,20 +332,20 @@ const SignupPage = () => {
             <Button
               type="submit"
               fullWidth
-              disabled={isSubmitting}
-              isLoading={isSubmitting}
-              className="bg-white text-gray-900 hover:bg-gray-200 focus:ring-white"
+              disabled={loading}
+              isLoading={loading}
+              className="bg-[#003366] text-white hover:bg-[#00274F] focus:ring-[#FF9800]"
             >
-              {isSubmitting ? "Signing up..." : "Sign Up"}
+              {loading ? "Signing up..." : "Sign Up"}
             </Button>
           </div>
         </form>
 
         {/* Link to Login Page */}
         <div className="mt-6 text-center">
-          <p className="text-gray-300">
+          <p className="text-gray-600">
             Already have an account?
-            <Link to="/login" className="text-white font-semibold hover:underline ml-1">
+            <Link to="/login" className="text-[#FF9800] font-semibold hover:underline ml-1">
               Sign in
             </Link>
           </p>
