@@ -2,24 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import {
-  Users,
-  Home,
-  FileText,
-  Bell,
-  DollarSign,
-  UserCheck,
-  MessageSquare,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
-  AlertCircle,
-  ChevronRight,
-} from "lucide-react"
+import { Users, Home, FileText, Bell, DollarSign, UserCheck, MessageSquare, Calendar, TrendingUp, TrendingDown, AlertCircle, ChevronRight } from 'lucide-react'
 import Card from "../../components/common/Card"
 import Button from "../../components/common/Button"
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks"
 import { useNotification } from "../../components/common/Notification"
+import { useTheme } from "../../context/ThemeContext"
+import { getThemeClasses } from "../../utils/theme"
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks"
 
 // Mock data for dashboard stats
 const dashboardStats = [
@@ -164,6 +153,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate()
   const { user } = useAppSelector((state) => state.auth)
   const { showNotification } = useNotification()
+  const { theme } = useTheme()
+  const themeClasses = getThemeClasses(theme)
 
   const [timeOfDay, setTimeOfDay] = useState("")
   const [currentDate, setCurrentDate] = useState("")
@@ -289,15 +280,14 @@ const AdminDashboard = () => {
             {recentActivities.map((activity) => (
               <div key={activity.id} className="flex items-start p-3 rounded-lg hover:bg-gray-50 transition-colors">
                 <div
-                  className={`p-2 rounded-full mr-4 ${
-                    activity.status === "pending"
+                  className={`p-2 rounded-full mr-4 ${activity.status === "pending"
                       ? "bg-amber-100 text-amber-500"
                       : activity.status === "completed"
                         ? "bg-green-100 text-green-500"
                         : activity.status === "resolved"
                           ? "bg-blue-100 text-blue-500"
                           : "bg-gray-100 text-gray-500"
-                  }`}
+                    }`}
                 >
                   {getActivityIcon(activity.type)}
                 </div>
@@ -312,15 +302,14 @@ const AdminDashboard = () => {
                   </p>
                   <div className="flex items-center mt-2">
                     <span
-                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                        activity.status === "pending"
+                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${activity.status === "pending"
                           ? "bg-amber-100 text-amber-700"
                           : activity.status === "completed"
                             ? "bg-green-100 text-green-700"
                             : activity.status === "resolved"
                               ? "bg-blue-100 text-blue-700"
                               : "bg-gray-100 text-gray-700"
-                      }`}
+                        }`}
                     >
                       {activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
                     </span>

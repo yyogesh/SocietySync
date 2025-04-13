@@ -14,6 +14,11 @@ const AdminDashboard = lazy(() => import("./pages/dashboard/AdminDashboard"));
 const SecurityDashboard = lazy(
   () => import("./pages/dashboard/SecurityDashboard")
 );
+const ThemeSettingsPage = lazy(
+  () => import("./pages/setting/ThemeSettingsPage")
+);
+const UserProfilePage = lazy(() => import("./pages/user/UserProfilePage"));
+// const UserManagementPage = lazy(() => import("./pages/user/UserManagementPage"))
 
 const PublicRoute = () => {
   return <Outlet />;
@@ -111,6 +116,7 @@ export const AppRoutes = () => {
             {/* Admin Routes */}
             <Route element={<AdminRoute />}>
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/theme-settings" element={<ThemeSettingsPage />} />
             </Route>
             {/* Resident Routes */}
             <Route element={<ResidentRoute />}>
@@ -124,6 +130,9 @@ export const AppRoutes = () => {
                 element={<SecurityDashboard />}
               />
             </Route>
+
+            {/* Common Routes for all authenticated users */}
+            <Route path="/profile" element={<UserProfilePage />} />
           </Route>
         </Route>
       </Routes>

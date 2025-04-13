@@ -11,6 +11,18 @@ Complaints & Support Management
 Events & Polls
 Admin Specific features
 
+UserProfilePage.tsx ==> login user
+UserManagementPage.tsx ==> admin user can manage
+User List ==> admin user can manage 
+User Approval Page ==> Admin user ==> Admin mail ==> 
+
+voting 
+polling 
+
+Ticket
+
+Event management 
+
 
 src/
 ├── app/                    # Application state and store

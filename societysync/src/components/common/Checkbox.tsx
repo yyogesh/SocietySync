@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react"
 
 export interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string
+  label?: string | React.ReactNode
   helperText?: string
   error?: string
   fullWidth?: boolean

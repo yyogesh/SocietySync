@@ -9,7 +9,7 @@ export interface User extends SignupFormData {
 }
 
 export interface AuthState {
-    user: User | null;
+    user: Partial<User> | null;
     isAuthenticated: boolean
     loading: boolean
     error: string | null
@@ -28,4 +28,6 @@ export interface PasswordResetData {
     email: string
     password: string
   }
+  
+
   

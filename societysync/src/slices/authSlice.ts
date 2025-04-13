@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AuthState, LoginCredentials, PasswordChangeData, PasswordResetData, User } from "../types/auth.types";
 import { SignupFormData } from "../utils/schemas";
-import { changePassword, login, logout, resetPassword, userRegister } from "../services/authService";
+import { changePassword, login, logout, resetPassword, userRegister, updateUserProfile as updateProfileService } from "../services/authService";
+import { updateUser } from "./userSlice";
 
 const initialState: AuthState = {
   user: null,
@@ -11,18 +12,22 @@ const initialState: AuthState = {
 }
 
 // Login user
-export const loginUser = createAsyncThunk("auth/login", async (credentials: LoginCredentials, { rejectWithValue }) => {
+export const loginUser = createAsyncThunk("auth/login", async (credentials: LoginCredentials, { rejectWithValue, dispatch }) => {
   try {
-    return await login(credentials)
+    const response = await login(credentials)
+    dispatch(updateUser(response))
+    return response;
   } catch (error: any) {
     return rejectWithValue(error.message)
   }
 })
 
 // Register User
-export const registerUser = createAsyncThunk('auth/register', async (user: SignupFormData, { rejectWithValue }) => {
+export const registerUser = createAsyncThunk('auth/register', async (user: Partial<SignupFormData>, { rejectWithValue, dispatch }) => {
   try {
-    return await userRegister(user);
+    const response = await userRegister(user);
+    dispatch(updateUser(response as User))
+    return response;
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
@@ -59,6 +64,18 @@ export const changeUserPassword = createAsyncThunk(
     try {
       await changePassword(data)
       return true
+    } catch (error: any) {
+      return rejectWithValue(error.message)
+    }
+  },
+)
+
+// Update current user's profile
+export const updateUserProfile = createAsyncThunk(
+  "user/updateProfile",
+  async (userData: SignupFormData, { rejectWithValue }) => {
+    try {
+      return await updateProfileService(userData)
     } catch (error: any) {
       return rejectWithValue(error.message)
     }
@@ -114,7 +131,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.error = action.payload as string;
       });
-    }
+  }
 });
 
 export const { setUser, clearError } = authSlice.actions;
