@@ -1,21 +1,21 @@
-import type React from "react"
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { Building, ArrowLeft } from "lucide-react"
-import Button from "../../components/common/Button"
-import Input from "../../components/common/Input"
-import Select from "../../components/common/Select"
-import Radio from "../../components/common/Radio"
-import Checkbox from "../../components/common/Checkbox"
-import FileInput from "../../components/common/FileInput"
-import { motion } from "framer-motion"
-import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useTheme } from "../../context/ThemeContext"
-import { getThemeColors } from "../../utils/theme"
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks"
-import { registerUser } from "../../slices/authSlice"
-import { SignupFormData, signupSchema } from "../../utils/schemas"
+import type React from "react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Building, ArrowLeft } from "lucide-react";
+import Button from "../../components/common/Button";
+import Input from "../../components/common/Input";
+import Select from "../../components/common/Select";
+import Radio from "../../components/common/Radio";
+import Checkbox from "../../components/common/Checkbox";
+import FileInput from "../../components/common/FileInput";
+import { motion } from "framer-motion";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTheme } from "../../context/ThemeContext";
+import { getThemeColors } from "../../utils/theme";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { registerUser } from "../../slices/authSlice";
+import { SignupFormData, signupSchema } from "../../utils/schemas";
 
 // India States and Cities Data
 const STATES = [
@@ -36,7 +36,7 @@ const STATES = [
   { value: "telangana", label: "Telangana" },
   { value: "uttar_pradesh", label: "Uttar Pradesh" },
   { value: "west_bengal", label: "West Bengal" },
-]
+];
 
 const CITIES_BY_STATE = {
   andhra_pradesh: [
@@ -138,7 +138,7 @@ const CITIES_BY_STATE = {
   ],
   // Default empty array for other states
   default: [],
-}
+};
 
 // Constants for placeholders
 const PLACEHOLDERS = {
@@ -156,18 +156,18 @@ const PLACEHOLDERS = {
   aadharCard: "Enter your 12-digit Aadhar card number",
   propertyID: "Enter property ID",
   PPPID: "Enter PPPID",
-}
+};
 
 const SignupPage = () => {
-  const { theme } = useTheme()
-  const themeColors = getThemeColors(theme)
+  const { theme } = useTheme();
+  const themeColors = getThemeColors(theme);
 
-  const [step, setStep] = useState(1)
-  const [profilePreview, setProfilePreview] = useState<string | null>(null)
+  const [step, setStep] = useState(1);
+  const [profilePreview, setProfilePreview] = useState<string | null>(null);
 
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
-  const { loading, error } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error } = useAppSelector((state) => state.auth);
 
   const {
     register,
@@ -200,57 +200,76 @@ const SignupPage = () => {
       userType: "owner",
       agreeToTerms: false,
     },
-  })
+  });
 
   // Get cities based on selected state
   const getCitiesForState = (state: string) => {
-    return CITIES_BY_STATE[state as keyof typeof CITIES_BY_STATE] || CITIES_BY_STATE.default
-  }
+    return (
+      CITIES_BY_STATE[state as keyof typeof CITIES_BY_STATE] ||
+      CITIES_BY_STATE.default
+    );
+  };
 
   // Update cities when state changes
   const handleStateChange = (stateValue: string) => {
     // Reset city when state changes
-    console.log('register', )
-    setValue("city", getCitiesForState(stateValue)[0]?.value || "")
-  }
+    console.log("register");
+    setValue("city", getCitiesForState(stateValue)[0]?.value || "");
+  };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      const reader = new FileReader()
+      const file = e.target.files[0];
+      const reader = new FileReader();
       reader.onload = (e) => {
         if (e.target?.result) {
-          setProfilePreview(e.target.result as string)
+          setProfilePreview(e.target.result as string);
         }
-      }
-      reader.readAsDataURL(file)
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleNextStep = async () => {
-    let fieldsToValidate: (keyof SignupFormData)[] = []
+    let fieldsToValidate: (keyof SignupFormData)[] = [];
 
     if (step === 1) {
-      fieldsToValidate = ["firstName", "lastName", "gender", "email", "password", "confirmPassword", "phoneNumber"]
+      fieldsToValidate = [
+        "firstName",
+        "lastName",
+        "gender",
+        "email",
+        "password",
+        "confirmPassword",
+        "phoneNumber",
+      ];
     } else if (step === 2) {
-      fieldsToValidate = ["state", "city", "pinNumber", "address", "streetTower", "floorNumber", "houseNumber"]
+      fieldsToValidate = [
+        "state",
+        "city",
+        "pinNumber",
+        "address",
+        "streetTower",
+        "floorNumber",
+        "houseNumber",
+      ];
     }
 
-    const isStepValid = await trigger(fieldsToValidate)
+    const isStepValid = await trigger(fieldsToValidate);
 
     if (isStepValid) {
-      setStep(step + 1)
+      setStep(step + 1);
     }
-  }
+  };
 
   const handlePrevStep = () => {
-    setStep(step - 1)
-  }
+    setStep(step - 1);
+  };
 
   const onSubmit = async (data: SignupFormData) => {
     if (step !== 3) {
-      handleNextStep()
-      return
+      handleNextStep();
+      return;
     }
 
     try {
@@ -273,16 +292,16 @@ const SignupPage = () => {
         PPPID: data.PPPID,
         userType: data.userType,
         profilePicture: data.profilePicture?.[0],
-      }
+      };
 
-      const resultAction = await dispatch(registerUser(userData))
+      const resultAction = await dispatch(registerUser(userData));
       if (registerUser.fulfilled.match(resultAction)) {
-        navigate("/dashboard")
+        navigate("/dashboard");
       }
     } catch (error) {
-      console.error("Registration failed:", error)
+      console.error("Registration failed:", error);
     }
-  }
+  };
 
   return (
     <div
@@ -295,55 +314,79 @@ const SignupPage = () => {
         className="min-h-screen md:min-h-full relative bg-white backdrop-blur-lg shadow-xl border border-white/20 md:rounded-2xl w-full max-w-2xl p-8"
       >
         <div className="flex justify-center mb-6">
-          <div className={`bg-[${themeColors.primary}]/20 p-3 rounded-full shadow-md`}>
-            <Building className={`h-10 w-10 text-[${themeColors.primaryDark}]`} />
+          <div
+            className={`bg-[${themeColors.primary}]/20 p-3 rounded-full shadow-md`}
+          >
+            <Building
+              className={`h-10 w-10 text-[${themeColors.primaryDark}]`}
+            />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">Create your account</h2>
-        <p className="text-center text-gray-600 mb-6">Join {theme.name} to manage your society experience</p>
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">
+          Create your account
+        </h2>
+        <p className="text-center text-gray-600 mb-6">
+          Join {theme.name} to manage your society experience
+        </p>
 
-        {error && <div className="bg-red-500 text-white p-3 rounded-lg mb-6 text-sm">{error}</div>}
+        {error && (
+          <div className="bg-red-500 text-white p-3 rounded-lg mb-6 text-sm">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Improved Step indicator using theme variables */}
           <div className="flex items-center justify-center mb-8">
             <div className="flex items-center">
-              <button 
+              <button
                 type="button"
                 onClick={() => step > 1 && setStep(1)}
                 disabled={step < 1}
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition-all duration-300 ${
-                  step >= 1 
-                    ? `bg-[${themeColors.secondary}] text-white shadow-md` 
+                  step >= 1
+                    ? `bg-[${themeColors.secondary}] text-white shadow-md`
                     : "bg-gray-200 text-gray-600"
-                } ${step > 1 ? "cursor-pointer hover:bg-[${themeColors.secondaryDark}]" : ""}`}
+                } ${
+                  step > 1
+                    ? "cursor-pointer hover:bg-[${themeColors.secondaryDark}]"
+                    : ""
+                }`}
               >
                 1
               </button>
-              <div className={`w-16 h-2 rounded transition-all duration-300 ${
-                step >= 2 ? `bg-[${themeColors.secondary}]` : "bg-gray-200"
-              }`}></div>
+              <div
+                className={`w-16 h-2 transition-all duration-300 ${
+                  step >= 2 ? `bg-[${themeColors.secondary}]` : "bg-gray-200"
+                }`}
+              ></div>
               <button
                 type="button"
                 onClick={() => step > 2 && setStep(2)}
                 disabled={step < 2}
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition-all duration-300 ${
-                  step >= 2 
-                    ? `bg-[${themeColors.secondary}] text-white shadow-md` 
+                  step >= 2
+                    ? `bg-[${themeColors.secondary}] text-white shadow-md`
                     : "bg-gray-200 text-gray-600"
-                } ${step > 2 ? "cursor-pointer hover:bg-[${themeColors.secondaryDark}]" : ""}`}
+                } ${
+                  step > 2
+                    ? "cursor-pointer hover:bg-[${themeColors.secondaryDark}]"
+                    : ""
+                }`}
               >
                 2
               </button>
-              <div className={`w-16 h-2 rounded transition-all duration-300 ${
-                step >= 3 ? `bg-[${themeColors.secondary}]` : "bg-gray-200"
-              }`}></div>
+              <div
+                className={`w-16 h-2 transition-all duration-300 ${
+                  step >= 3 ? `bg-[${themeColors.secondary}]` : "bg-gray-200"
+                }`}
+              ></div>
               <button
                 type="button"
                 disabled={step < 3}
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-medium transition-all duration-300 ${
-                  step >= 3 
-                    ? `bg-[${themeColors.secondary}] text-white shadow-md` 
+                  step >= 3
+                    ? `bg-[${themeColors.secondary}] text-white shadow-md`
                     : "bg-gray-200 text-gray-600"
                 }`}
               >
@@ -361,7 +404,9 @@ const SignupPage = () => {
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Basic Information</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Basic Information
+              </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
@@ -460,7 +505,9 @@ const SignupPage = () => {
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Address Information</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Address Information
+              </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Controller
@@ -490,13 +537,13 @@ const SignupPage = () => {
                   name="city"
                   control={control}
                   render={({ field }) => (
-                    <Select 
-                      label="City" 
-                      id="city" 
+                    <Select
+                      label="City"
+                      id="city"
                       options={getCitiesForState(watch("state"))}
-                      error={errors.city?.message} 
-                      fullWidth 
-                      {...field} 
+                      error={errors.city?.message}
+                      fullWidth
+                      {...field}
                     />
                   )}
                 />
@@ -584,7 +631,9 @@ const SignupPage = () => {
               transition={{ duration: 0.3 }}
               className="space-y-4"
             >
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Additional Information</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                Additional Information
+              </h3>
 
               <Input
                 label="Aadhar Card Number"
@@ -639,7 +688,9 @@ const SignupPage = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Profile Picture (Optional)
+                </label>
                 <div className="flex items-center space-x-4">
                   <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                     {profilePreview ? (
@@ -657,8 +708,8 @@ const SignupPage = () => {
                     accept="image/*"
                     {...register("profilePicture")}
                     onChange={(e) => {
-                      register("profilePicture").onChange(e)
-                      handleProfileImageChange(e)
+                      register("profilePicture").onChange(e);
+                      handleProfileImageChange(e);
                     }}
                     error={errors.profilePicture?.message?.toString()}
                     helperText="Upload a profile picture (max 5MB)"
@@ -715,14 +766,17 @@ const SignupPage = () => {
         <div className="mt-6 text-center">
           <p className="text-gray-600">
             Already have an account?{" "}
-            <Link to="/login" className={`text-[${themeColors.primary}] hover:text-[${themeColors.primaryDark}]`}>
+            <Link
+              to="/login"
+              className={`text-[${themeColors.primary}] hover:text-[${themeColors.primaryDark}]`}
+            >
               Sign in
             </Link>
           </p>
         </div>
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default SignupPage
+export default SignupPage;
